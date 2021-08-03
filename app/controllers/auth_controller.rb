@@ -13,7 +13,7 @@ class AuthController < ApplicationController
     def persist
         if request.headers['Authorization']
             encoded_token = request.headers['Authorization'].split(' ')[1]
-            token = JWT.decode(encoded_token, secret)
+            token = JWT.decode(encoded_token, Rails.application.secrets.secret_key_base)
             user_id = token[0]['user_id']
             user = User.find(user_id)
             render json: user

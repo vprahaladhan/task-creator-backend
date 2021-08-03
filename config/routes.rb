@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   resources :users
+  resources :tasks
   post '/login' => 'auth#login'
-  get '/auth' => 'auth#persist'
+  get '/get_current_user' => 'auth#persist'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
