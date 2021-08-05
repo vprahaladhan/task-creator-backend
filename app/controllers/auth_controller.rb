@@ -3,18 +3,18 @@ class AuthController < ApplicationController
     def login
         user = User.find_by(username: login_params[:username])
         if user && user.authenticate(login_params[:password])
-             token = JWT.encode({user_id: user.id}, Rails.application.secrets.secret_key_base, 'HS256')
-            render json: {user: user, token: token}
+             token = JsonWebToken.encode({user_id: user.id}, (24).hours.from_now.to_i)
+            render json: {user: user, token: token, message: "Login success"}
         else
             render json: {errors: user.errors.full_messages}
         end
     end
 
-    def persist
+    def get_user
         if request.headers['Authorization']
             encoded_token = request.headers['Authorization'].split(' ')[1]
-            token = JWT.decode(encoded_token, Rails.application.secrets.secret_key_base)
-            user_id = token[0]['user_id']
+            token = JsonWebToken.decode(encoded_token)
+            user_id = token[:user_id]
             user = User.find(user_id)
             render json: user
         end
