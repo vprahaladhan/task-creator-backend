@@ -3,8 +3,10 @@ class TasksController < ApplicationController
 
   # GET /tasks or /tasks.json
   def index
-    render json: Task.all
-  end
+    puts "Current User yooo #{Task.all.where(user_id: get_current_user.id)}"
+    render json: Task.all.where(user_id: get_current_user.id)
+  end 
+
 
   # GET /tasks/1 or /tasks/1.json
   def show
@@ -12,6 +14,7 @@ class TasksController < ApplicationController
 
   # GET /tasks/new
   def new
+    
     @task = Task.new
   end
 
@@ -20,17 +23,15 @@ class TasksController < ApplicationController
   end
 
   # POST /tasks or /tasks.json
+  
   def create
-    @task = Task.new(task_params)
-
-    respond_to do |format|
-      if @task.save
-        format.html { redirect_to @task, notice: "Task was successfully created." }
-        format.json { render :show, status: :created, location: @task }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @task.errors, status: :unprocessable_entity }
-      end
+    task = Task.new(task_params)
+    task.user = get_current_user
+    puts "New task: #{task}"
+    if task.save!
+      render json: task
+    else
+      render json: @task.error.full_messages, status: 402
     end
   end
 

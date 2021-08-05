@@ -13,6 +13,7 @@ class AuthController < ApplicationController
     def get_user
         if request.headers['Authorization']
            user = get_current_user 
+           console.log(render json: user)
            render json: user
         end
     end
