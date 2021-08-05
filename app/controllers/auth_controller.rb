@@ -14,7 +14,8 @@ class AuthController < ApplicationController
         if request.headers['Authorization']
             encoded_token = request.headers['Authorization'].split(' ')[1]
             token = JsonWebToken.decode(encoded_token)
-            user_id = token[:user_id]
+            puts "User: #{token[:data][:user_id]}"
+            user_id = token[:data][:user_id]
             user = User.find(user_id)
             render json: user
         end
