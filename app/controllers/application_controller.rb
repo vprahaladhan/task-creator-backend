@@ -7,11 +7,10 @@ class ApplicationController < ActionController::Base
     end
 
     def get_current_user
-      puts request.headers['Authorization']
+      puts "Auth", request.headers['Authorization']
         encoded_token = request.headers['Authorization'].split(' ')[1]
         token = JsonWebToken.decode_http_token(encoded_token)
         puts "Token hEEEEERE #{token}"
-        puts "User: #{token["data"]["user_id"]}"
         user_id = token["data"]["user_id"]
         user = User.find(user_id)
         user

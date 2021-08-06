@@ -4,7 +4,7 @@ class TasksController < ApplicationController
   # GET /tasks or /tasks.json
   def index
     puts "Current User yooo #{Task.all.where(user_id: get_current_user.id)}"
-    render json: Task.all.where(user_id: get_current_user.id)
+    render json: Task.all.where(user_id: get_current_user.id).order(created_at: :desc)
   end 
 
 
@@ -14,46 +14,44 @@ class TasksController < ApplicationController
 
   # GET /tasks/new
   def new
-    
-    @task = Task.new
   end
 
-  # GET /tasks/1/edit
-  def edit
+  def update
+    task = Task.find(params[:id])
+    if task.update(task_params)
+        render json: task, status: 201 
+    else
+        render json: {errors: task.errors.full_message }, status: 422
+    end
+  end
+
+  def destroy
+    task = Task.find(params[:id])
+    task.destroy
+    render json: task, status: :ok
   end
 
   # POST /tasks or /tasks.json
   
   def create
-    task = Task.new(task_params)
+    task = Task.create(task_params)
     task.user = get_current_user()
     puts "New task: #{task}"
-    if task.save!
+    if task
       render json: task
     else
       render json: @task.error.full_messages, status: 402
     end
   end
 
-  # PATCH/PUT /tasks/1 or /tasks/1.json
-  def update
-    respond_to do |format|
-      if @task.update(task_params)
-        format.html { redirect_to @task, notice: "Task was successfully updated." }
-        format.json { render :show, status: :ok, location: @task }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @task.errors, status: :unprocessable_entity }
-      end
-    end
-  end
-
   # DELETE /tasks/1 or /tasks/1.json
   def destroy
-    @task.destroy
-    respond_to do |format|
-      format.html { redirect_to tasks_url, notice: "Task was successfully destroyed." }
-      format.json { head :no_content }
+    @task = Task.find(params[:id])
+
+    if @task.destroy
+      render :show
+    else
+      render json: @task.errors.full_messages, status: 402
     end
   end
 
@@ -65,6 +63,6 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:title, :description, :user_id)
+      params.require(:task).permit(:id, :title, :description, :user_id)
     end
 end

@@ -5,8 +5,11 @@ class UsersController < ApplicationController
     end
 
     def create
+        puts "eneter create method"
         user = User.create(user_params)
+        puts user.username, user.password
         if user.valid?
+            user.save
             token = set_token(user)
             render json: {user: user, token: token}
         else
