@@ -26,7 +26,7 @@ class TasksController < ApplicationController
   
   def create
     task = Task.new(task_params)
-    task.user = get_current_user
+    task.user = get_current_user()
     puts "New task: #{task}"
     if task.save!
       render json: task

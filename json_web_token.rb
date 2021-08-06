@@ -14,10 +14,11 @@ class JsonWebToken
       # encoded_token
     end
    
-    def decode_http_token(token)
-      decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base)[0]
-      decoded_token_hash = HashWithIndifferentAccess.new decoded_token
-      decoded_token_hash
+    def decode(token)
+      puts "Before Body in JsonWebToken >> #{token}"
+      decoded_token = JWT.decode(token, Rails.application.secrets.secret_key_base)
+      puts "Body in JsonWebToken >> #{HashWithIndifferentAccess.new decoded_token[0]}"
+      HashWithIndifferentAccess.new body[0]
     rescue
       nil
     end
