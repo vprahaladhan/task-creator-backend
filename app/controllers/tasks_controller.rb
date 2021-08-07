@@ -17,7 +17,9 @@ class TasksController < ApplicationController
   end
 
   def update
-    task = Task.find(params[:id])
+    puts set_task.title
+    task = set_task
+    
     if task.update(task_params)
         render json: task, status: 201 
     else
@@ -26,7 +28,7 @@ class TasksController < ApplicationController
   end
 
   def destroy
-    task = Task.find(params[:id])
+    task = set_task
     task.destroy
     render json: task, status: :ok
   end
@@ -35,7 +37,7 @@ class TasksController < ApplicationController
   
   def create
     task = Task.create(task_params)
-    task.user = get_current_user()
+    task.user = User.find(params[:user_id])
     puts "New task: #{task}"
     if task
       render json: task
